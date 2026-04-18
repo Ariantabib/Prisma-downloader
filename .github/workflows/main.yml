@@ -1,0 +1,24 @@
+name: Download Prisma Engines
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  download-engines:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download and Extract Files
+        run: |
+          mkdir engines
+          curl -o engines/schema-engine.gz https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz
+          curl -o engines/libquery_engine.so.node.gz https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/libquery_engine.so.node.gz
+          gzip -d engines/*.gz
+
+      - name: Upload as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-linux-engines
+          path: engines/
+
